@@ -1,4 +1,4 @@
-package wakatime_tg_bot
+package main
 
 import (
 	"encoding/json"
