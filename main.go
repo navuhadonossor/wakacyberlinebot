@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	tgbotapi "github.com/Syfaro/telegram-bot-api"
 	"github.com/gin-gonic/gin"
 	"io/ioutil"
@@ -34,18 +33,13 @@ func webhookHandler(c *gin.Context) {
 	defer c.Request.Body.Close()
 
 	bytes, err := ioutil.ReadAll(c.Request.Body)
-	log.Println("qweqweqwe")
 	if err != nil {
 		log.Println(err)
 		return
 	}
 
 	var update tgbotapi.Update
-	err = json.Unmarshal(bytes, &update)
-	if err != nil {
-		log.Println(err)
-		return
-	}
+	bot.Send(tgbotapi.NewMessage(update.Message.Chat.ID, string(bytes)))
 }
 
 func main() {
