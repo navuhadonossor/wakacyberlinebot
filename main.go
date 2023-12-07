@@ -34,7 +34,6 @@ func webhookHandler(c *gin.Context) {
 	defer c.Request.Body.Close()
 
 	bytes, err := ioutil.ReadAll(c.Request.Body)
-	log.Println("qweqweqwe")
 	if err != nil {
 		log.Println(err)
 		return
@@ -46,6 +45,9 @@ func webhookHandler(c *gin.Context) {
 		log.Println(err)
 		return
 	}
+	msg := tgbotapi.NewMessage(update.Message.Chat.ID, "HELLO")
+	msg.ReplyToMessageID = update.Message.MessageID
+	bot.Send(msg)
 }
 
 func main() {
