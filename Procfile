@@ -1,0 +1,1 @@
+web: go build && wakatime_tg_bot
