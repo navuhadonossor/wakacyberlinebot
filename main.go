@@ -34,6 +34,7 @@ func webhookHandler(c *gin.Context) {
 	defer c.Request.Body.Close()
 
 	bytes, err := ioutil.ReadAll(c.Request.Body)
+	log.Println("qweqweqwe")
 	if err != nil {
 		log.Println(err)
 		return
