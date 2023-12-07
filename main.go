@@ -1,39 +1,67 @@
 package wakatime_tg_bot
 
 import (
+	"encoding/json"
 	tgbotapi "github.com/Syfaro/telegram-bot-api"
-	"net/http"
+	"github.com/gin-gonic/gin"
+	"io/ioutil"
+	"log"
 	"os"
-	"reflect"
 )
 
-func main() {
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		if r.URL.Path != "/" {
-			http.NotFound(w, r)
-			return
-		}
-		runBot()
-	})
-}
+var (
+	bot     *tgbotapi.BotAPI
+	baseURL = "https://wakacyberlinebot-269a92218149.herokuapp.com/"
+)
 
-func runBot() {
-	bot, err := tgbotapi.NewBotAPI(os.Getenv("TOKEN"))
+func initTelegram() {
+	var err error
+
+	bot, err = tgbotapi.NewBotAPI(os.Getenv("TOKEN"))
 	if err != nil {
-		panic(err)
+		log.Println(err)
+		return
 	}
 
-	updates := bot.ListenForWebhook("/")
-	for update := range updates {
-		if update.Message == nil {
-			continue
-		}
-		if reflect.TypeOf(update.Message.Text).Kind() == reflect.String && update.Message.Text != "" {
-			switch update.Message.Text {
-			case "/start":
-				msg := tgbotapi.NewMessage(update.Message.Chat.ID, "qweqweqwe")
-				bot.Send(msg)
-			}
-		}
+	url := baseURL + bot.Token
+	_, err = bot.SetWebhook(tgbotapi.NewWebhook(url))
+	if err != nil {
+		log.Println(err)
+	}
+}
+
+func webhookHandler(c *gin.Context) {
+	defer c.Request.Body.Close()
+
+	bytes, err := ioutil.ReadAll(c.Request.Body)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	var update tgbotapi.Update
+	err = json.Unmarshal(bytes, &update)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+}
+
+func main() {
+	port := os.Getenv("PORT")
+
+	if port == "" {
+		log.Fatal("$PORT must be set")
+	}
+
+	router := gin.New()
+	router.Use(gin.Logger())
+
+	initTelegram()
+	router.POST("/"+bot.Token, webhookHandler)
+
+	err := router.Run(":" + port)
+	if err != nil {
+		log.Println(err)
 	}
 }
