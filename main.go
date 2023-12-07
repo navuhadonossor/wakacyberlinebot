@@ -37,11 +37,9 @@ func webhookHandler(c *gin.Context) {
 		log.Println(err)
 		return
 	}
-	log.Print("bytes is: ")
-	log.Println(bytes)
 
 	var update tgbotapi.Update
-	bot.Send(tgbotapi.NewMessage(update.Message.Chat.ID, "qwe"))
+	bot.Send(tgbotapi.NewMessage(update.Message.Chat.ID, string(bytes)))
 }
 
 func main() {
