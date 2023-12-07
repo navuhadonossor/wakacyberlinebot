@@ -2,14 +2,19 @@ package wakatime_tg_bot
 
 import (
 	tgbotapi "github.com/Syfaro/telegram-bot-api"
+	"net/http"
 	"os"
 	"reflect"
-	"time"
 )
 
 func main() {
-	time.Sleep(1 * time.Minute)
-	runBot()
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/" {
+			http.NotFound(w, r)
+			return
+		}
+		runBot()
+	})
 }
 
 func runBot() {
@@ -18,9 +23,7 @@ func runBot() {
 		panic(err)
 	}
 
-	u := tgbotapi.NewUpdate(0)
-	u.Timeout = 60
-	updates, err := bot.GetUpdatesChan(u)
+	updates := bot.ListenForWebhook("/")
 	for update := range updates {
 		if update.Message == nil {
 			continue
