@@ -45,6 +45,8 @@ func webhookHandler(c *gin.Context) {
 		log.Println(err)
 		return
 	}
+	log.Println(bytes)
+	log.Println(string(bytes))
 	msg := tgbotapi.NewMessage(update.Message.Chat.ID, "HELLO")
 	msg.ReplyToMessageID = update.Message.MessageID
 	bot.Send(msg)
