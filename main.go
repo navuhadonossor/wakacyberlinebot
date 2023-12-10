@@ -14,6 +14,25 @@ var (
 	baseURL = "https://wakacyberlinebot-269a92218149.herokuapp.com/"
 )
 
+func main() {
+	port := os.Getenv("PORT")
+
+	if port == "" {
+		log.Fatal("$PORT must be set")
+	}
+
+	router := gin.New()
+	router.Use(gin.Logger())
+
+	initTelegram()
+	router.POST("/"+bot.Token, webhookHandler)
+
+	err := router.Run(":" + port)
+	if err != nil {
+		log.Println(err)
+	}
+}
+
 func initTelegram() {
 	var err error
 
@@ -45,28 +64,15 @@ func webhookHandler(c *gin.Context) {
 		log.Println(err)
 		return
 	}
-	log.Print("request: ")
-	log.Println(string(bytes))
-	msg := tgbotapi.NewMessage(update.Message.Chat.ID, "HELLO")
-	msg.ReplyToMessageID = update.Message.MessageID
-	bot.Send(msg)
-}
-
-func main() {
-	port := os.Getenv("PORT")
-
-	if port == "" {
-		log.Fatal("$PORT must be set")
+	switch update.Message.Text {
+	case "/register":
+		registerUser(update.Message)
+	case "/top":
+		generateLaderboardTable()
+	case "/members":
+		generateMembersList()
+	default:
+		updateUserWakaToken(update.Message, update.Message.Text)
 	}
-
-	router := gin.New()
-	router.Use(gin.Logger())
-
-	initTelegram()
-	router.POST("/"+bot.Token, webhookHandler)
-
-	err := router.Run(":" + port)
-	if err != nil {
-		log.Println(err)
-	}
+	return
 }
