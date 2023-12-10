@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"fmt"
+	"log"
 	"os"
 )
 
@@ -18,24 +19,33 @@ func openConnect() *sql.DB {
 		host,
 		port,
 		dbName)
-	db, _ := sql.Open("postgres", url)
+	db, err := sql.Open("postgres", url)
+	if err != nil {
+		log.Println("Open connection failed: " + err.Error())
+	}
 
 	return db
 }
 
 func insertUser(db *sql.DB, tgId int, tgName string) {
-	db.Exec(
+	_, err := db.Exec(
 		"INSERT INTO user (telegram_id, telegram_name) VALUES ($1, $2)",
 		tgId,
 		tgName,
 	)
+	if err != nil {
+		log.Println("Insert user failed: " + err.Error())
+	}
 }
 
 func updateUser(db *sql.DB, tgId int, apiToken string, wakatimeName string) {
-	db.Exec(
+	_, err := db.Exec(
 		"UPDATE user SET api_token = $1 AND wakatime_name = $2 WHERE telegram_id = $3",
 		apiToken,
 		wakatimeName,
 		tgId,
 	)
+	if err != nil {
+		log.Println("Update user failed: " + err.Error())
+	}
 }
