@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	tgbotapi "github.com/Syfaro/telegram-bot-api"
 	"github.com/gin-gonic/gin"
+	_ "github.com/lib/pq"
 	"io/ioutil"
 	"log"
 	"os"
