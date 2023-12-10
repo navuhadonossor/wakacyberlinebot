@@ -2,24 +2,12 @@ package main
 
 import (
 	"database/sql"
-	"fmt"
 	"log"
 	"os"
 )
 
 func openConnect() *sql.DB {
-	user := os.Getenv("DB_USER")
-	password := os.Getenv("DB_PASSWORD")
-	dbName := os.Getenv("DB_NAME")
-	host := os.Getenv("DB_HOST")
-	port := os.Getenv("DB_PORT")
-	url := fmt.Sprintf("postgres://%v:%v@%v:%v/%v?sslmode=disable",
-		user,
-		password,
-		host,
-		port,
-		dbName)
-	db, err := sql.Open("postgres", url)
+	db, err := sql.Open("postgres", os.Getenv("DATABASE_URL"))
 	if err != nil {
 		log.Println("Open connection failed: " + err.Error())
 	}
