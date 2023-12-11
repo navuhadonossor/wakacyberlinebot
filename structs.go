@@ -1,5 +1,7 @@
 package main
 
+const JsonFilepath = "users.json"
+
 type wakatimeUserResponse struct {
 	data wakatimeUserData
 }

@@ -16,15 +16,16 @@ func insertUser(tgId int, tgName string) error {
 		}
 	}
 	id, err := uuid.NewUUID()
-	users = append(users, User{
+	newUser := &User{
 		id:               id.String(),
 		telegramId:       tgId,
 		telegramName:     tgName,
 		wakatimeName:     "",
 		wakatimeApiToken: "",
-	})
+	}
+	users = append(users, *newUser)
 	content, err := json.Marshal(users)
-	err = os.WriteFile("users.json", content, 0644)
+	err = os.WriteFile(JsonFilepath, content, 0644)
 	if err != nil {
 		log.Println("Insert user failed: " + err.Error())
 	}
@@ -40,7 +41,7 @@ func updateUser(tgId int, apiToken string, wakatimeName string) error {
 		}
 	}
 	content, err := json.Marshal(users)
-	err = os.WriteFile("users.json", content, 0644)
+	err = os.WriteFile(JsonFilepath, content, 0644)
 	if err != nil {
 		log.Println("Update user failed: " + err.Error())
 	}
@@ -49,7 +50,7 @@ func updateUser(tgId int, apiToken string, wakatimeName string) error {
 
 func getUserList() ([]User, error) {
 	var users []User
-	content, err := os.ReadFile("users.json")
+	content, err := os.ReadFile(JsonFilepath)
 	err = json.Unmarshal(content, &users)
 	log.Print("JSON CONTENTS")
 	log.Println(users)
