@@ -1,51 +1,58 @@
 package main
 
 import (
-	"database/sql"
-	"fmt"
+	"encoding/json"
+	"errors"
+	"github.com/google/uuid"
 	"log"
 	"os"
 )
 
-func openConnect() *sql.DB {
-	user := os.Getenv("DB_USER")
-	password := os.Getenv("DB_PASSWORD")
-	dbName := os.Getenv("DB_NAME")
-	host := os.Getenv("DB_HOST")
-	port := os.Getenv("DB_PORT")
-	url := fmt.Sprintf("postgres://%v:%v@%v:%v/%v?sslmode=disable",
-		user,
-		password,
-		host,
-		port,
-		dbName)
-	db, err := sql.Open("postgres", url)
-	if err != nil {
-		log.Println("Open connection failed: " + err.Error())
+func insertUser(tgId int, tgName string) error {
+	users, err := getUserList()
+	for _, user := range users {
+		if user.telegramId == tgId {
+			return errors.New("user already exist")
+		}
 	}
-
-	return db
-}
-
-func insertUser(db *sql.DB, tgId int, tgName string) {
-	_, err := db.Exec(
-		"INSERT INTO user (telegram_id, telegram_name) VALUES ($1, $2)",
-		tgId,
-		tgName,
-	)
+	id, err := uuid.NewUUID()
+	users = append(users, User{
+		id:               id.String(),
+		telegramId:       tgId,
+		telegramName:     tgName,
+		wakatimeName:     "",
+		wakatimeApiToken: "",
+	})
+	content, err := json.Marshal(users)
+	err = os.WriteFile("users.json", content, 0644)
 	if err != nil {
 		log.Println("Insert user failed: " + err.Error())
 	}
+	return nil
 }
 
-func updateUser(db *sql.DB, tgId int, apiToken string, wakatimeName string) {
-	_, err := db.Exec(
-		"UPDATE user SET api_token = $1 AND wakatime_name = $2 WHERE telegram_id = $3",
-		apiToken,
-		wakatimeName,
-		tgId,
-	)
+func updateUser(tgId int, apiToken string, wakatimeName string) error {
+	users, err := getUserList()
+	for i, user := range users {
+		if user.telegramId == tgId {
+			users[i].wakatimeName = wakatimeName
+			users[i].wakatimeApiToken = apiToken
+		}
+	}
+	content, err := json.Marshal(users)
+	err = os.WriteFile("users.json", content, 0644)
 	if err != nil {
 		log.Println("Update user failed: " + err.Error())
 	}
+	return nil
+}
+
+func getUserList() ([]User, error) {
+	var users []User
+	content, err := os.ReadFile("users.json")
+	err = json.Unmarshal(content, &users)
+	if err != nil {
+		return []User{}, errors.New("Cannot read users: " + err.Error())
+	}
+	return users, nil
 }

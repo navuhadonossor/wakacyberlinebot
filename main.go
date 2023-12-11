@@ -4,8 +4,7 @@ import (
 	"encoding/json"
 	tgbotapi "github.com/Syfaro/telegram-bot-api"
 	"github.com/gin-gonic/gin"
-	_ "github.com/lib/pq"
-	"io/ioutil"
+	"io"
 	"log"
 	"os"
 )
@@ -53,7 +52,7 @@ func initTelegram() {
 func webhookHandler(c *gin.Context) {
 	defer c.Request.Body.Close()
 
-	bytes, err := ioutil.ReadAll(c.Request.Body)
+	bytes, err := io.ReadAll(c.Request.Body)
 	if err != nil {
 		log.Println(err)
 		return
@@ -69,9 +68,9 @@ func webhookHandler(c *gin.Context) {
 	case "/register":
 		registerUser(update.Message)
 	case "/top":
-		generateLaderboardTable()
+		generateLaderboardTable(update.Message)
 	case "/members":
-		generateMembersList()
+		generateMembersList(update.Message)
 	default:
 		updateUserWakaToken(update.Message, update.Message.Text)
 	}

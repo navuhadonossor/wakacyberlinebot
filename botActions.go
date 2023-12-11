@@ -3,16 +3,20 @@ package main
 import (
 	"encoding/json"
 	tgbotapi "github.com/Syfaro/telegram-bot-api"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"os"
+	"strconv"
 )
 
 func registerUser(message *tgbotapi.Message) {
-	from := message.From
-	insertUser(openConnect(), from.ID, from.UserName)
-	msg := tgbotapi.NewMessage(message.Chat.ID, "Please send your wakatime API token in next message")
+	err := insertUser(message.From.ID, message.From.UserName)
+	text := "Please send your wakatime API token in next message"
+	if err != nil {
+		text = "You already registered!"
+	}
+	msg := tgbotapi.NewMessage(message.Chat.ID, text)
 	msg.ReplyToMessageID = message.MessageID
 	bot.Send(msg)
 }
@@ -32,19 +36,27 @@ func updateUserWakaToken(message *tgbotapi.Message, apiToken string) {
 			log.Println("Response failed: " + err.Error())
 		}
 		var jsonResponse wakatimeUserResponse
-		bytes, _ := ioutil.ReadAll(response.Body)
+		bytes, _ := io.ReadAll(response.Body)
 		_ = json.Unmarshal(bytes, &jsonResponse)
-		updateUser(openConnect(), from.ID, apiToken, jsonResponse.data.id)
+		updateUser(from.ID, apiToken, jsonResponse.data.id)
 		msg := tgbotapi.NewMessage(message.Chat.ID, "Now you join leaderboard :smirk: Good luck!")
 		msg.ReplyToMessageID = message.MessageID
 		bot.Send(msg)
 	}
 }
 
-func generateMembersList() {
-
+func generateMembersList(message *tgbotapi.Message) {
+	text := "Members: \n"
+	users, _ := getUserList()
+	for i, user := range users {
+		row := strconv.Itoa(i + 1)
+		text = text + row + ". " + user.wakatimeName + "\n"
+	}
+	msg := tgbotapi.NewMessage(message.Chat.ID, text)
+	msg.ReplyToMessageID = message.MessageID
+	bot.Send(msg)
 }
 
-func generateLaderboardTable() {
-
+func generateLaderboardTable(message *tgbotapi.Message) {
+	generateMembersList(message)
 }
