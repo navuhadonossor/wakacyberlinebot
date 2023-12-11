@@ -51,6 +51,8 @@ func getUserList() ([]User, error) {
 	var users []User
 	content, err := os.ReadFile("users.json")
 	err = json.Unmarshal(content, &users)
+	log.Print("JSON CONTENTS")
+	log.Println(users)
 	if err != nil {
 		return []User{}, errors.New("Cannot read users: " + err.Error())
 	}
