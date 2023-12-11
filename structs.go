@@ -9,9 +9,9 @@ type wakatimeUserData struct {
 }
 
 type User struct {
-	id               string
-	telegramId       int
-	telegramName     string
-	wakatimeApiToken string
-	wakatimeName     string
+	id               string `json:"id"`
+	telegramId       int    `json:"telegram_id"`
+	telegramName     string `json:"telegram_name"`
+	wakatimeApiToken string `json:"wakatime_api_token"`
+	wakatimeName     string `json:"wakatime_name"`
 }
