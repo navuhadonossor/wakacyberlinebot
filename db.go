@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"github.com/google/uuid"
 	"log"
 	"os"
@@ -17,15 +18,17 @@ func insertUser(tgId int, tgName string) error {
 		}
 	}
 	id, err := uuid.NewUUID()
-	newUser := &User{
+	newUser := User{
 		id:               id.String(),
 		telegramId:       tgId,
 		telegramName:     tgName,
 		wakatimeName:     "",
 		wakatimeApiToken: "",
 	}
-	users = append(users, *newUser)
+	users = append(users, newUser)
 	content, err := json.Marshal(users)
+	fmt.Print("REGISTER USER")
+	fmt.Println(string(content))
 	err = os.WriteFile(JsonFilepath, content, 0644)
 	if err != nil {
 		log.Println("Insert user failed: " + err.Error())
@@ -55,7 +58,7 @@ func getUserList() ([]User, error) {
 	content, err := os.ReadFile(JsonFilepath)
 	err = json.Unmarshal(content, &users)
 	log.Print("JSON CONTENTS")
-	log.Println("%+v\n", users)
+	fmt.Println("%+v\n", users)
 	if err != nil {
 		return []User{}, errors.New("Cannot read users: " + err.Error())
 	}
