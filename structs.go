@@ -11,9 +11,9 @@ type wakatimeUserData struct {
 }
 
 type User struct {
-	id               string `json:"id"`
-	telegramId       int    `json:"telegram_id"`
-	telegramName     string `json:"telegram_name"`
-	wakatimeApiToken string `json:"wakatime_api_token"`
-	wakatimeName     string `json:"wakatime_name"`
+	Id               string `json:"id"`
+	TelegramId       int    `json:"telegram_id"`
+	TelegramName     string `json:"telegram_name"`
+	WakatimeApiToken string `json:"wakatime_api_token"`
+	WakatimeName     string `json:"wakatime_name"`
 }

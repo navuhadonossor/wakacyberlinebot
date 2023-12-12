@@ -13,17 +13,17 @@ func insertUser(tgId int, tgName string) error {
 	checkFile()
 	users, err := getUserList()
 	for _, user := range users {
-		if user.telegramId == tgId {
+		if user.TelegramId == tgId {
 			return errors.New("user already exist")
 		}
 	}
 	id, err := uuid.NewUUID()
 	newUser := User{
-		id:               id.String(),
-		telegramId:       tgId,
-		telegramName:     tgName,
-		wakatimeName:     "",
-		wakatimeApiToken: "",
+		Id:               id.String(),
+		TelegramId:       tgId,
+		TelegramName:     tgName,
+		WakatimeName:     "",
+		WakatimeApiToken: "",
 	}
 	users = append(users, newUser)
 	content, err := json.Marshal(users)
@@ -40,9 +40,9 @@ func updateUser(tgId int, apiToken string, wakatimeName string) error {
 	checkFile()
 	users, err := getUserList()
 	for i, user := range users {
-		if user.telegramId == tgId {
-			users[i].wakatimeName = wakatimeName
-			users[i].wakatimeApiToken = apiToken
+		if user.TelegramId == tgId {
+			users[i].WakatimeName = wakatimeName
+			users[i].WakatimeApiToken = apiToken
 		}
 	}
 	content, err := json.Marshal(users)

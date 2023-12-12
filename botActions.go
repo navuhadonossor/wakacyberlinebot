@@ -50,7 +50,7 @@ func generateMembersList(message *tgbotapi.Message) {
 	users, _ := getUserList()
 	for i, user := range users {
 		row := strconv.Itoa(i + 1)
-		text = text + row + ". " + user.telegramName + "\n"
+		text = text + row + ". " + user.TelegramName + "\n"
 	}
 	msg := tgbotapi.NewMessage(message.Chat.ID, text)
 	msg.ReplyToMessageID = message.MessageID
