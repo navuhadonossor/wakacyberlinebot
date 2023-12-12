@@ -41,7 +41,8 @@ func generateLaderboardTable(message *tgbotapi.Message, period string) {
 	for i, response := range responses {
 		row := strconv.Itoa(i + 1)
 		hours := strconv.Itoa(response.Data.Total_Seconds / 3600)
-		text = text + row + ". " + response.Data.Username + " " + hours + "h.\n"
+		minutes := strconv.Itoa(response.Data.Total_Seconds % 60)
+		text = text + row + ". " + response.Data.Username + " " + hours + "h. " + minutes + "m.\n"
 	}
 	msg := tgbotapi.NewMessage(message.Chat.ID, text)
 	msg.ReplyToMessageID = message.MessageID
