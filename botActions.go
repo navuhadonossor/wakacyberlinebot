@@ -1,6 +1,7 @@
 package main
 
 import (
+	b64 "encoding/base64"
 	"encoding/json"
 	tgbotapi "github.com/Syfaro/telegram-bot-api"
 	"io"
@@ -30,7 +31,7 @@ func updateUserWakaToken(message *tgbotapi.Message, apiToken string) {
 		if err != nil {
 			log.Println("Failed to construct request!")
 		}
-		request.Header.Add("Authorization", apiToken)
+		request.Header.Add("Authorization", "Basic "+b64.StdEncoding.EncodeToString([]byte(apiToken)))
 		response, err := client.Do(request)
 		if err != nil {
 			log.Println("Response failed: " + err.Error())
