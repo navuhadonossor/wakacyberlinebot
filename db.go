@@ -1,6 +1,7 @@
 package main
 
 import (
+	b64 "encoding/base64"
 	"encoding/json"
 	"errors"
 	"github.com/google/uuid"
@@ -39,7 +40,7 @@ func updateUser(tgId int, apiToken string, wakatimeName string) error {
 	for i, user := range users {
 		if user.TelegramId == tgId {
 			users[i].WakatimeName = wakatimeName
-			users[i].WakatimeApiToken = apiToken
+			users[i].WakatimeApiToken = b64.StdEncoding.EncodeToString([]byte(apiToken))
 		}
 	}
 	content, err := json.Marshal(users)
