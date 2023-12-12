@@ -3,11 +3,11 @@ package main
 const JsonFilepath = "users.json"
 
 type wakatimeUserResponse struct {
-	data wakatimeUserData
+	Data wakatimeUserData
 }
 type wakatimeUserData struct {
-	id       string
-	username string
+	Id       string
+	Username string
 }
 
 type User struct {

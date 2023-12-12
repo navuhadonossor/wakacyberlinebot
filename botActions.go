@@ -41,7 +41,7 @@ func updateUserWakaToken(message *tgbotapi.Message, apiToken string) {
 		log.Println("WAKA RESPONSE")
 		log.Println(string(bytes))
 		_ = json.Unmarshal(bytes, &jsonResponse)
-		updateUser(from.ID, apiToken, jsonResponse.data.id)
+		updateUser(from.ID, apiToken, jsonResponse.Data.Id)
 		msg := tgbotapi.NewMessage(message.Chat.ID, "Now you join leaderboard :smirk: Good luck!")
 		msg.ReplyToMessageID = message.MessageID
 		bot.Send(msg)
