@@ -67,10 +67,14 @@ func webhookHandler(c *gin.Context) {
 	switch update.Message.Text {
 	case "/register":
 		registerUser(update.Message)
-	case "/top":
-		generateLaderboardTable(update.Message)
-	case "/members":
-		generateMembersList(update.Message)
+	case "/top_today":
+		generateLaderboardTable(update.Message, "today")
+	case "/top_week":
+		generateLaderboardTable(update.Message, "week")
+	case "/top_month":
+		generateLaderboardTable(update.Message, "month")
+	case "/top_year":
+		generateLaderboardTable(update.Message, "year")
 	default:
 		updateUserWakaToken(update.Message, update.Message.Text)
 	}

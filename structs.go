@@ -10,6 +10,15 @@ type wakatimeUserData struct {
 	Username string
 }
 
+type wakatimeStatResponse struct {
+	Data wakatimeStatData
+}
+
+type wakatimeStatData struct {
+	Total_Seconds int
+	Username      string
+}
+
 type User struct {
 	Id               string `json:"id"`
 	TelegramId       int    `json:"telegram_id"`

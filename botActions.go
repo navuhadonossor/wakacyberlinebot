@@ -1,12 +1,8 @@
 package main
 
 import (
-	"encoding/json"
 	tgbotapi "github.com/Syfaro/telegram-bot-api"
-	"io"
-	"log"
-	"net/http"
-	"os"
+	"sort"
 	"strconv"
 )
 
@@ -24,22 +20,7 @@ func registerUser(message *tgbotapi.Message) {
 func updateUserWakaToken(message *tgbotapi.Message, apiToken string) {
 	if message.Chat.IsPrivate() {
 		from := message.From
-		client := &http.Client{}
-		url := os.Getenv("WAKATIME_HOST") + "/api/compat/wakatime/v1/users/current"
-		request, err := http.NewRequest("GET", url, nil)
-		if err != nil {
-			log.Println("Failed to construct request!")
-		}
-		request.Header.Add("Authorization", "Basic "+apiToken)
-		response, err := client.Do(request)
-		if err != nil {
-			log.Println("Response failed: " + err.Error())
-		}
-		var jsonResponse wakatimeUserResponse
-		bytes, _ := io.ReadAll(response.Body)
-		log.Println("WAKA RESPONSE")
-		log.Println(string(bytes))
-		_ = json.Unmarshal(bytes, &jsonResponse)
+		jsonResponse := getWakaUserInfo(apiToken)
 		updateUser(from.ID, apiToken, jsonResponse.Data.Id)
 		msg := tgbotapi.NewMessage(message.Chat.ID, "Now you join leaderboard :smirk: Good luck!")
 		msg.ReplyToMessageID = message.MessageID
@@ -47,18 +28,22 @@ func updateUserWakaToken(message *tgbotapi.Message, apiToken string) {
 	}
 }
 
-func generateMembersList(message *tgbotapi.Message) {
-	text := "Members: \n"
+func generateLaderboardTable(message *tgbotapi.Message, period string) {
+	text := "Leaderboard: \n"
 	users, _ := getUserList()
-	for i, user := range users {
+	var responses []wakatimeStatResponse
+	for _, user := range users {
+		responses = append(responses, getUserStatInfo(user.WakatimeApiToken, period))
+	}
+	sort.Slice(responses, func(i, j int) bool {
+		return responses[i].Data.Total_Seconds > responses[i].Data.Total_Seconds
+	})
+	for i, response := range responses {
 		row := strconv.Itoa(i + 1)
-		text = text + row + ". " + user.TelegramName + "\n"
+		hours := strconv.Itoa(response.Data.Total_Seconds / 3600)
+		text = text + row + ". " + response.Data.Username + " " + hours + "ч.\n"
 	}
 	msg := tgbotapi.NewMessage(message.Chat.ID, text)
 	msg.ReplyToMessageID = message.MessageID
 	bot.Send(msg)
-}
-
-func generateLaderboardTable(message *tgbotapi.Message) {
-	generateMembersList(message)
 }
