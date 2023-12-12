@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"github.com/google/uuid"
 	"log"
 	"os"
@@ -27,8 +26,6 @@ func insertUser(tgId int, tgName string) error {
 	}
 	users = append(users, newUser)
 	content, err := json.Marshal(users)
-	fmt.Print("REGISTER USER")
-	fmt.Println(string(content))
 	err = os.WriteFile(JsonFilepath, content, 0644)
 	if err != nil {
 		log.Println("Insert user failed: " + err.Error())
@@ -56,9 +53,9 @@ func updateUser(tgId int, apiToken string, wakatimeName string) error {
 func getUserList() ([]User, error) {
 	var users []User
 	content, err := os.ReadFile(JsonFilepath)
-	err = json.Unmarshal(content, &users)
 	log.Print("JSON CONTENTS")
-	fmt.Println("%+v\n", users)
+	log.Println(string(content))
+	err = json.Unmarshal(content, &users)
 	if err != nil {
 		return []User{}, errors.New("Cannot read users: " + err.Error())
 	}
