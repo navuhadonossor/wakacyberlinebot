@@ -22,7 +22,7 @@ func updateUserWakaToken(message *tgbotapi.Message, apiToken string) {
 		from := message.From
 		jsonResponse := getWakaUserInfo(apiToken)
 		updateUser(from.ID, apiToken, jsonResponse.Data.Id)
-		msg := tgbotapi.NewMessage(message.Chat.ID, "Now you join leaderboard :smirk: Good luck!")
+		msg := tgbotapi.NewMessage(message.Chat.ID, "Now you join leaderboard 😏 Good luck!")
 		msg.ReplyToMessageID = message.MessageID
 		bot.Send(msg)
 	}
@@ -41,7 +41,7 @@ func generateLaderboardTable(message *tgbotapi.Message, period string) {
 	for i, response := range responses {
 		row := strconv.Itoa(i + 1)
 		hours := strconv.Itoa(response.Data.Total_Seconds / 3600)
-		text = text + row + ". " + response.Data.Username + " " + hours + "ч.\n"
+		text = text + row + ". " + response.Data.Username + " " + hours + "h.\n"
 	}
 	msg := tgbotapi.NewMessage(message.Chat.ID, text)
 	msg.ReplyToMessageID = message.MessageID
