@@ -10,8 +10,7 @@ import (
 )
 
 var (
-	bot     *tgbotapi.BotAPI
-	baseURL = "https://wakacyberlinebot-269a92218149.herokuapp.com/"
+	bot *tgbotapi.BotAPI
 )
 
 func main() {
@@ -42,7 +41,7 @@ func initTelegram() {
 		return
 	}
 
-	url := baseURL + bot.Token
+	url := os.Getenv("HOST") + bot.Token
 	_, err = bot.SetWebhook(tgbotapi.NewWebhook(url))
 	if err != nil {
 		log.Println(err)
@@ -73,17 +72,13 @@ func webhookHandler(c *gin.Context) {
 	switch update.Message.Text {
 	case "/register":
 		registerUser(update.Message)
-	case "/top_today":
-	case "/top_today@wakacyberline_bot":
+	case "/top_today", "/top_today@wakacyberline_bot":
 		generateLaderboardTable(update.Message, "today")
-	case "/top_week":
-	case "/top_week@wakacyberline_bot":
+	case "/top_week", "/top_week@wakacyberline_bot":
 		generateLaderboardTable(update.Message, "last_7_days")
-	case "/top_month":
-	case "/top_month@wakacyberline_bot":
+	case "/top_month", "/top_month@wakacyberline_bot":
 		generateLaderboardTable(update.Message, "last_30_days")
-	case "/top_year":
-	case "/top_year@wakacyberline_bot":
+	case "/top_year", "/top_year@wakacyberline_bot":
 		generateLaderboardTable(update.Message, "year")
 	default:
 		updateUserWakaToken(update.Message, update.Message.Text)

@@ -54,6 +54,8 @@ func updateUser(tgId int, apiToken string, wakatimeName string) error {
 func getUserList() ([]User, error) {
 	var users []User
 	content, err := os.ReadFile(JsonFilepath)
+	log.Print("JSON CONTENT")
+	log.Println(string(content))
 	err = json.Unmarshal(content, &users)
 	if err != nil {
 		return []User{}, errors.New("Cannot read users: " + err.Error())
