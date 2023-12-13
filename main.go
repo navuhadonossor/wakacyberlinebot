@@ -64,6 +64,8 @@ func webhookHandler(c *gin.Context) {
 		log.Println(err)
 		return
 	}
+	log.Print("INCOMING MESSAGE")
+	log.Println(update)
 	switch update.Message.Text {
 	case "/register":
 		registerUser(update.Message)
