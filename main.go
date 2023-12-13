@@ -71,12 +71,16 @@ func webhookHandler(c *gin.Context) {
 	case "/register":
 		registerUser(update.Message)
 	case "/top_today":
+	case "/top_today@wakacyberline_bot":
 		generateLaderboardTable(update.Message, "today")
 	case "/top_week":
+	case "/top_week@wakacyberline_bot":
 		generateLaderboardTable(update.Message, "last_7_days")
 	case "/top_month":
+	case "/top_month@wakacyberline_bot":
 		generateLaderboardTable(update.Message, "last_30_days")
 	case "/top_year":
+	case "/top_year@wakacyberline_bot":
 		generateLaderboardTable(update.Message, "year")
 	default:
 		updateUserWakaToken(update.Message, update.Message.Text)
