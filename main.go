@@ -70,9 +70,9 @@ func webhookHandler(c *gin.Context) {
 	case "/top_today":
 		generateLaderboardTable(update.Message, "today")
 	case "/top_week":
-		generateLaderboardTable(update.Message, "week")
+		generateLaderboardTable(update.Message, "last_7_days")
 	case "/top_month":
-		generateLaderboardTable(update.Message, "month")
+		generateLaderboardTable(update.Message, "last_30_days")
 	case "/top_year":
 		generateLaderboardTable(update.Message, "year")
 	default:
