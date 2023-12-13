@@ -65,7 +65,8 @@ func webhookHandler(c *gin.Context) {
 		return
 	}
 	log.Print("INCOMING MESSAGE")
-	log.Println(update)
+	marshaled, _ := json.Marshal(update)
+	log.Println(string(marshaled))
 	switch update.Message.Text {
 	case "/register":
 		registerUser(update.Message)
